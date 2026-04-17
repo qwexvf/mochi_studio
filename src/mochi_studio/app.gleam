@@ -1,10 +1,10 @@
 // mochi_studio/app.gleam
 // Root Lustre application — Model, Msg, update, view
 
-import gleam/option.{type Option, None, Some}
 import lustre/effect.{type Effect}
 import lustre/element.{type Element}
 import lustre/element/html
+import lustre/attribute
 import mochi_studio/collection.{type Collection}
 import mochi_studio/panel.{type Panel, Builder, Playground}
 import mochi_studio/playground as pg
@@ -62,19 +62,27 @@ pub fn update(model: Model, msg: Msg) -> #(Model, Effect(Msg)) {
 }
 
 pub fn view(model: Model) -> Element(Msg) {
-  html.div([], [
+  html.div([attribute.class("flex flex-col h-screen bg-gray-950 text-gray-100")], [
     view_navbar(model.active_panel),
-    case model.active_panel {
-      Playground -> pg.view(model.playground) |> element.map(PlaygroundMsg)
-      Builder -> sb.view(model.builder) |> element.map(BuilderMsg)
-    },
+    html.main([attribute.class("flex-1 overflow-hidden")], [
+      case model.active_panel {
+        Playground -> pg.view(model.playground) |> element.map(PlaygroundMsg)
+        Builder -> sb.view(model.builder) |> element.map(BuilderMsg)
+      },
+    ]),
   ])
 }
 
 fn view_navbar(active: Panel) -> Element(Msg) {
-  html.nav([], [
-    html.span([], [html.text("mochi studio")]),
-    panel.tab_button(Playground, active, SwitchPanel),
-    panel.tab_button(Builder, active, SwitchPanel),
-  ])
+  html.nav(
+    [attribute.class("flex items-center gap-4 px-4 h-12 bg-gray-900 border-b border-gray-800 shrink-0")],
+    [
+      html.span(
+        [attribute.class("text-pink-400 font-bold tracking-tight mr-4")],
+        [html.text("mochi studio")],
+      ),
+      panel.tab_button(Playground, active, SwitchPanel),
+      panel.tab_button(Builder, active, SwitchPanel),
+    ],
+  )
 }
