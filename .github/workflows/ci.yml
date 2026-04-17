@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: "28.3"
+          gleam-version: "1.15.4"
+          rebar3-version: "3"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: gleam deps download
+      - run: gleam format --check src test
+      - run: gleam build
+      - run: gleam test --target javascript
