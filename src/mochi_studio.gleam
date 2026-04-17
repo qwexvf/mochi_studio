@@ -24,9 +24,15 @@
 import lustre
 import mochi_studio/app
 
+pub fn main() {
+  let endpoint = "/graphql"
+  let assert Ok(_) =
+    lustre.application(app.init(endpoint), app.update, app.view)
+    |> lustre.start("#app", Nil)
+}
+
 pub fn start(endpoint endpoint: String) {
   let assert Ok(_) =
     lustre.application(app.init(endpoint), app.update, app.view)
-    |> lustre.start("#mochi-studio", Nil)
-  Nil
+    |> lustre.start("#app", Nil)
 }
