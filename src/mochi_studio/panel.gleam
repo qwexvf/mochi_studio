@@ -24,8 +24,7 @@ pub fn tab_button(
     True -> base <> " bg-pink-500 text-white"
     False -> base <> " text-gray-400 hover:text-gray-100"
   }
-  html.button(
-    [attribute.class(classes), event.on_click(on_click(panel))],
-    [html.text(label)],
-  )
+  html.button([attribute.class(classes), event.on_click(on_click(panel))], [
+    html.text(label),
+  ])
 }

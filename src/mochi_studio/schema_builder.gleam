@@ -12,6 +12,7 @@ import lustre/event
 import mochi_studio/schema_node.{type SchemaNode, FieldDef, SchemaNode}
 
 const diagram_id = "sb-diagram"
+
 const container_id = "sb-container"
 
 // ── FFI ───────────────────────────────────────────────────────────────────────
@@ -60,10 +61,7 @@ pub type GeneratedOutput {
 }
 
 pub type Model {
-  Model(
-    output: Option(GeneratedOutput),
-    output_tab: OutputTab,
-  )
+  Model(output: Option(GeneratedOutput), output_tab: OutputTab)
 }
 
 pub type Msg {
@@ -77,10 +75,11 @@ pub type Msg {
 
 pub fn init() -> #(Model, Effect(Msg)) {
   let model = Model(output: None, output_tab: GleamTab)
-  let eff = effect.from(fn(dispatch) {
-    do_init(diagram_id, fn(json) { dispatch(GotGenerated(json)) })
-    do_init_resize(container_id)
-  })
+  let eff =
+    effect.from(fn(dispatch) {
+      do_init(diagram_id, fn(json) { dispatch(GotGenerated(json)) })
+      do_init_resize(container_id)
+    })
   #(model, eff)
 }
 
@@ -88,10 +87,12 @@ pub fn init() -> #(Model, Effect(Msg)) {
 
 pub fn update(model: Model, msg: Msg) -> #(Model, Effect(Msg)) {
   case msg {
-    GenerateAll ->
-      #(model, effect.from(fn(dispatch) {
+    GenerateAll -> #(
+      model,
+      effect.from(fn(dispatch) {
         do_generate(fn(json) { dispatch(GotGenerated(json)) })
-      }))
+      }),
+    )
 
     GotGenerated(json_str) -> {
       let output = case decode_nodes(json_str) {
@@ -109,8 +110,7 @@ pub fn update(model: Model, msg: Msg) -> #(Model, Effect(Msg)) {
 
     SwitchOutputTab(tab) -> #(Model(..model, output_tab: tab), effect.none())
 
-    CopyToClipboard(text) ->
-      #(model, effect.from(fn(_) { do_copy(text) }))
+    CopyToClipboard(text) -> #(model, effect.from(fn(_) { do_copy(text) }))
   }
 }
 
@@ -118,19 +118,23 @@ pub fn update(model: Model, msg: Msg) -> #(Model, Effect(Msg)) {
 
 fn decode_nodes(json_str: String) -> Result(List(SchemaNode), json.DecodeError) {
   let field_decoder = {
-    use name       <- decode.field("name", decode.string)
+    use name <- decode.field("name", decode.string)
     use field_type <- decode.field("field_type", decode.string)
-    use non_null   <- decode.field("non_null", decode.bool)
-    decode.success(FieldDef(name: name, field_type: field_type, non_null: non_null))
+    use non_null <- decode.field("non_null", decode.bool)
+    decode.success(FieldDef(
+      name: name,
+      field_type: field_type,
+      non_null: non_null,
+    ))
   }
 
   let node_decoder = {
-    use id     <- decode.field("id", decode.string)
-    use name   <- decode.field("name", decode.string)
-    use kind   <- decode.field("kind", decode.string)
+    use id <- decode.field("id", decode.string)
+    use name <- decode.field("name", decode.string)
+    use kind <- decode.field("kind", decode.string)
     use fields <- decode.field("fields", decode.list(field_decoder))
-    use x      <- decode.field("x", decode.int)
-    use y      <- decode.field("y", decode.int)
+    use x <- decode.field("x", decode.int)
+    use y <- decode.field("y", decode.int)
     decode.success(SchemaNode(
       id: id,
       name: name,
@@ -147,9 +151,9 @@ fn decode_nodes(json_str: String) -> Result(List(SchemaNode), json.DecodeError) 
 fn decode_kind(s: String) -> schema_node.NodeKind {
   case s {
     "InputObject" -> schema_node.InputObject
-    "Enum"        -> schema_node.Enum
-    "Union"       -> schema_node.Union
-    _             -> schema_node.Object
+    "Enum" -> schema_node.Enum
+    "Union" -> schema_node.Union
+    _ -> schema_node.Object
   }
 }
 
@@ -169,7 +173,9 @@ pub fn view(model: Model) -> Element(Msg) {
 fn view_resize_handle(side: String) -> Element(Msg) {
   html.div(
     [
-      attribute.class("w-1 shrink-0 cursor-col-resize bg-gray-800 hover:bg-indigo-500 transition-colors"),
+      attribute.class(
+        "w-1 shrink-0 cursor-col-resize bg-gray-800 hover:bg-indigo-500 transition-colors",
+      ),
       attribute.attribute("data-resize-handle", side),
     ],
     [],
@@ -199,25 +205,33 @@ fn view_right_panel(model: Model) -> Element(Msg) {
     Some(out) ->
       case model.output_tab {
         GleamTab -> out.gleam_types
-        SdlTab   -> out.sdl
-        SqlTab   -> out.sql
+        SdlTab -> out.sdl
+        SqlTab -> out.sql
         MochiTab -> out.mochi_schema
       }
   }
   html.div(
     [
-      attribute.class("flex flex-col bg-gray-900 border-l border-gray-800 shrink-0 overflow-hidden"),
+      attribute.class(
+        "flex flex-col bg-gray-900 border-l border-gray-800 shrink-0 overflow-hidden",
+      ),
       attribute.style("width", "280px"),
       attribute.attribute("data-panel", "right"),
     ],
     [
       // Tab bar + Generate button
       html.div(
-        [attribute.class("flex items-center gap-1 px-2 py-1.5 border-b border-gray-800 flex-wrap")],
+        [
+          attribute.class(
+            "flex items-center gap-1 px-2 py-1.5 border-b border-gray-800 flex-wrap",
+          ),
+        ],
         [
           html.button(
             [
-              attribute.class("px-2 py-1 rounded bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium transition-colors mr-1"),
+              attribute.class(
+                "px-2 py-1 rounded bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium transition-colors mr-1",
+              ),
               event.on_click(GenerateAll),
             ],
             [html.text("Generate")],
@@ -227,8 +241,10 @@ fn view_right_panel(model: Model) -> Element(Msg) {
             html.button(
               [
                 attribute.class(case model.output_tab == tab {
-                  True  -> "px-2 py-1 rounded text-xs text-indigo-300 bg-indigo-500/20 border border-indigo-500/30"
-                  False -> "px-2 py-1 rounded text-xs text-gray-500 hover:text-gray-300 transition-colors"
+                  True ->
+                    "px-2 py-1 rounded text-xs text-indigo-300 bg-indigo-500/20 border border-indigo-500/30"
+                  False ->
+                    "px-2 py-1 rounded text-xs text-gray-500 hover:text-gray-300 transition-colors"
                 }),
                 event.on_click(SwitchOutputTab(tab)),
               ],
@@ -243,7 +259,9 @@ fn view_right_panel(model: Model) -> Element(Msg) {
         [
           html.button(
             [
-              attribute.class("px-2 py-0.5 text-xs text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors"),
+              attribute.class(
+                "px-2 py-0.5 text-xs text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors",
+              ),
               event.on_click(CopyToClipboard(content)),
             ],
             [html.text("Copy")],
@@ -251,7 +269,11 @@ fn view_right_panel(model: Model) -> Element(Msg) {
         ],
       ),
       html.pre(
-        [attribute.class("flex-1 p-3 font-mono text-xs text-gray-300 overflow-auto leading-relaxed")],
+        [
+          attribute.class(
+            "flex-1 p-3 font-mono text-xs text-gray-300 overflow-auto leading-relaxed",
+          ),
+        ],
         [html.text(content)],
       ),
     ],

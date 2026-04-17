@@ -10,7 +10,11 @@ pub fn view(id: String) -> Element(msg) {
   html.div([attribute.id(id), attribute.class("flex-1 overflow-hidden")], [])
 }
 
-pub fn mount(id: String, value: String, on_change: fn(String) -> msg) -> Effect(msg) {
+pub fn mount(
+  id: String,
+  value: String,
+  on_change: fn(String) -> msg,
+) -> Effect(msg) {
   effect.after_paint(fn(dispatch, _) {
     do_mount(id, value, "", fn(v) { dispatch(on_change(v)) })
   })

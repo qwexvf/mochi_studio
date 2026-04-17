@@ -147,7 +147,11 @@ pub fn view(model: Model) -> Element(Msg) {
 
 fn view_toolbar(model: Model) -> Element(Msg) {
   html.div(
-    [attribute.class("flex items-center gap-2 px-3 py-2 bg-gray-900 border-b border-gray-800 shrink-0")],
+    [
+      attribute.class(
+        "flex items-center gap-2 px-3 py-2 bg-gray-900 border-b border-gray-800 shrink-0",
+      ),
+    ],
     [
       html.button(
         [
@@ -157,11 +161,18 @@ fn view_toolbar(model: Model) -> Element(Msg) {
           attribute.disabled(model.loading),
           event.on_click(ExecuteQuery),
         ],
-        [html.text(case model.loading { True -> "Running…" False -> "▶  Run" })],
+        [
+          html.text(case model.loading {
+            True -> "Running…"
+            False -> "▶  Run"
+          }),
+        ],
       ),
       html.button(
         [
-          attribute.class("px-3 py-1.5 rounded text-sm text-gray-400 hover:text-gray-100 transition-colors"),
+          attribute.class(
+            "px-3 py-1.5 rounded text-sm text-gray-400 hover:text-gray-100 transition-colors",
+          ),
           event.on_click(CopyShareLink),
         ],
         [html.text("Share")],
@@ -193,13 +204,26 @@ fn view_response(model: Model) -> Element(Msg) {
     case model.error {
       Some(err) ->
         html.pre(
-          [attribute.class("flex-1 p-3 font-mono text-sm text-red-400 overflow-auto")],
+          [
+            attribute.class(
+              "flex-1 p-3 font-mono text-sm text-red-400 overflow-auto",
+            ),
+          ],
           [html.text(err)],
         )
       None ->
         html.pre(
-          [attribute.class("flex-1 p-3 font-mono text-sm text-gray-300 overflow-auto")],
-          [html.text(option.unwrap(model.response, "// Run a query to see results"))],
+          [
+            attribute.class(
+              "flex-1 p-3 font-mono text-sm text-gray-300 overflow-auto",
+            ),
+          ],
+          [
+            html.text(option.unwrap(
+              model.response,
+              "// Run a query to see results",
+            )),
+          ],
         )
     },
   ])
@@ -207,13 +231,23 @@ fn view_response(model: Model) -> Element(Msg) {
 
 fn view_pane_label(label: String) -> Element(Msg) {
   html.div(
-    [attribute.class("px-3 py-1 text-xs text-gray-500 bg-gray-900 border-b border-gray-800 shrink-0")],
+    [
+      attribute.class(
+        "px-3 py-1 text-xs text-gray-500 bg-gray-900 border-b border-gray-800 shrink-0",
+      ),
+    ],
     [html.text(label)],
   )
 }
 
 fn load_item(model: Model, item: CollectionItem) -> Model {
-  Model(..model, query: item.query, variables: item.variables, response: None, error: None)
+  Model(
+    ..model,
+    query: item.query,
+    variables: item.variables,
+    response: None,
+    error: None,
+  )
 }
 
 fn mount_editors(model: Model) -> Effect(Msg) {

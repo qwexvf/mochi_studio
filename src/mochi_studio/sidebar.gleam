@@ -13,11 +13,7 @@ import mochi_studio/collection.{
 }
 
 pub type Model {
-  Model(
-    collections: List(Collection),
-    expanded: List(String),
-    search: String,
-  )
+  Model(collections: List(Collection), expanded: List(String), search: String)
 }
 
 pub type Msg {
@@ -53,7 +49,11 @@ pub fn update(model: Model, msg: Msg) -> Model {
 
 pub fn view(model: Model) -> Element(Msg) {
   html.div(
-    [attribute.class("flex flex-col w-56 bg-gray-900 border-r border-gray-800 shrink-0")],
+    [
+      attribute.class(
+        "flex flex-col w-56 bg-gray-900 border-r border-gray-800 shrink-0",
+      ),
+    ],
     [
       view_search(model),
       html.div(
@@ -85,7 +85,11 @@ fn view_collection(col: Collection, model: Model) -> Element(Msg) {
 
   html.div([attribute.class("py-1")], [
     html.div(
-      [attribute.class("px-2 py-1 text-xs font-semibold text-gray-400 uppercase tracking-wider")],
+      [
+        attribute.class(
+          "px-2 py-1 text-xs font-semibold text-gray-400 uppercase tracking-wider",
+        ),
+      ],
       [html.text(col.name)],
     ),
     view_category("queries", "Queries", queries, model),
@@ -116,28 +120,33 @@ fn view_category(
         event.on_click(ToggleCategory(id)),
       ],
       [
-        html.span([], [html.text(case is_open { True -> "▾" False -> "▸" })]),
+        html.span([], [
+          html.text(case is_open {
+            True -> "▾"
+            False -> "▸"
+          }),
+        ]),
         html.span([attribute.class("flex-1 text-left")], [html.text(label)]),
         html.span([attribute.class("text-gray-600 text-xs")], [
-          html.text(case count { 0 -> "" _ -> int_to_string(count) }),
+          html.text(case count {
+            0 -> ""
+            _ -> int_to_string(count)
+          }),
         ]),
       ],
     ),
     case is_open {
       False -> html.div([], [])
       True ->
-        html.div(
-          [],
-          case filtered {
-            [] -> [
-              html.div(
-                [attribute.class("px-6 py-1 text-xs text-gray-700 italic")],
-                [html.text("empty")],
-              ),
-            ]
-            _ -> list.map(filtered, view_item)
-          },
-        )
+        html.div([], case filtered {
+          [] -> [
+            html.div(
+              [attribute.class("px-6 py-1 text-xs text-gray-700 italic")],
+              [html.text("empty")],
+            ),
+          ]
+          _ -> list.map(filtered, view_item)
+        })
     },
   ])
 }
@@ -153,7 +162,11 @@ fn view_item(item: CollectionItem) -> Element(Msg) {
     [
       html.span([attribute.class("flex-1 truncate")], [html.text(item.name)]),
       html.span(
-        [attribute.class("text-pink-500 opacity-0 group-hover:opacity-100 text-xs")],
+        [
+          attribute.class(
+            "text-pink-500 opacity-0 group-hover:opacity-100 text-xs",
+          ),
+        ],
         [html.text(operation_badge(item.operation))],
       ),
     ],
@@ -169,33 +182,29 @@ fn operation_badge(op: collection.OperationType) -> String {
 }
 
 fn demo_collection() -> Collection {
-  Collection(
-    id: "default",
-    name: "My Collection",
-    items: [
-      CollectionItem(
-        id: "1",
-        name: "Get users",
-        query: "{ users { id name } }",
-        variables: "{}",
-        operation: Query,
-      ),
-      CollectionItem(
-        id: "2",
-        name: "Get user by ID",
-        query: "query GetUser($id: ID!) {\n  user(id: $id) {\n    id\n    name\n  }\n}",
-        variables: "{\"id\": \"1\"}",
-        operation: Query,
-      ),
-      CollectionItem(
-        id: "3",
-        name: "Create user",
-        query: "mutation CreateUser($name: String!) {\n  createUser(name: $name) {\n    id\n    name\n  }\n}",
-        variables: "{\"name\": \"Alice\"}",
-        operation: Mutation,
-      ),
-    ],
-  )
+  Collection(id: "default", name: "My Collection", items: [
+    CollectionItem(
+      id: "1",
+      name: "Get users",
+      query: "{ users { id name } }",
+      variables: "{}",
+      operation: Query,
+    ),
+    CollectionItem(
+      id: "2",
+      name: "Get user by ID",
+      query: "query GetUser($id: ID!) {\n  user(id: $id) {\n    id\n    name\n  }\n}",
+      variables: "{\"id\": \"1\"}",
+      operation: Query,
+    ),
+    CollectionItem(
+      id: "3",
+      name: "Create user",
+      query: "mutation CreateUser($name: String!) {\n  createUser(name: $name) {\n    id\n    name\n  }\n}",
+      variables: "{\"name\": \"Alice\"}",
+      operation: Mutation,
+    ),
+  ])
 }
 
 @external(javascript, "./sidebar_ffi.mjs", "stringContains")

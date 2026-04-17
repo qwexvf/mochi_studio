@@ -334,8 +334,7 @@ pub fn nodes_to_sql(nodes: List(SchemaNode)) -> String {
 
 fn node_to_sql(node: SchemaNode, object_names: List(String)) -> String {
   let table_name = to_snake_case(node.name) <> "s"
-  let has_id =
-    list.any(node.fields, fn(f) { string.lowercase(f.name) == "id" })
+  let has_id = list.any(node.fields, fn(f) { string.lowercase(f.name) == "id" })
   let id_col = case has_id {
     True -> []
     False -> ["  id UUID PRIMARY KEY DEFAULT gen_random_uuid()"]
@@ -347,11 +346,7 @@ fn node_to_sql(node: SchemaNode, object_names: List(String)) -> String {
   let ts_col = ["  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()"]
   let all_cols = list.append(list.append(id_col, field_cols), ts_col)
   let cols_str = string.join(all_cols, ",\n")
-  "CREATE TABLE IF NOT EXISTS "
-  <> table_name
-  <> " (\n"
-  <> cols_str
-  <> "\n);"
+  "CREATE TABLE IF NOT EXISTS " <> table_name <> " (\n" <> cols_str <> "\n);"
 }
 
 fn sql_type(field: FieldDef, object_names: List(String)) -> String {
@@ -423,7 +418,13 @@ fn node_to_mochi_type_fn(node: SchemaNode) -> String {
       }
       "  |> "
       <> builder
-      <> "(\"" <> f.name <> "\", fn(u: " <> node.name <> ") { u." <> f.name <> " })"
+      <> "(\""
+      <> f.name
+      <> "\", fn(u: "
+      <> node.name
+      <> ") { u."
+      <> f.name
+      <> " })"
     })
     |> string.join("\n")
   "pub fn "
