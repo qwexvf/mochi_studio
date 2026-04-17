@@ -1,0 +1,16 @@
+name = "mochi_studio"
+version = "0.1.0"
+description = "GraphQL studio for mochi — interactive playground, query collections, and visual schema builder"
+licences = ["Apache-2.0"]
+repository = { type = "github", user = "qwexvf", repo = "mochi" }
+target = "javascript"
+
+[dependencies]
+gleam_stdlib = ">= 0.44.0 and < 2.0.0"
+gleam_json = ">= 3.0.0 and < 4.0.0"
+gleam_http = ">= 3.0.0 and < 4.0.0"
+lustre = ">= 4.0.0 and < 5.0.0"
+lustre_http = ">= 4.0.0 and < 5.0.0"
+
+[dev-dependencies]
+gleeunit = ">= 1.0.0 and < 2.0.0"
