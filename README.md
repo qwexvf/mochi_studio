@@ -4,8 +4,10 @@ Interactive GraphQL studio for mochi — playground, query collections, and visu
 
 ## Installation
 
-```sh
-gleam add mochi_studio
+```toml
+# gleam.toml
+[dependencies]
+mochi_studio = { git = "https://github.com/qwexvf/mochi_studio", ref = "main" }
 ```
 
 ## License
