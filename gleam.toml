@@ -10,7 +10,7 @@ gleam_stdlib = ">= 0.71.0 and < 1.0.0"
 gleam_json = ">= 3.1.0 and < 4.0.0"
 gleam_http = ">= 4.3.0 and < 5.0.0"
 lustre = ">= 5.6.0 and < 6.0.0"
-lustre_http = ">= 1.0.0 and < 2.0.0"
+gleam_fetch = ">= 1.4.0 and < 2.0.0"
 
 [dev-dependencies]
 gleeunit = ">= 1.9.0 and < 2.0.0"
