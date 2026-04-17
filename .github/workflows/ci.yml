@@ -8,11 +8,14 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        otp-version: ["27.3", "28.3"]
     steps:
       - uses: actions/checkout@v4
       - uses: erlef/setup-beam@v1
         with:
-          otp-version: "28.3"
+          otp-version: ${{ matrix.otp-version }}
           gleam-version: "1.15.4"
           rebar3-version: "3"
       - uses: actions/setup-node@v4
@@ -21,4 +24,6 @@ jobs:
       - run: gleam deps download
       - run: gleam format --check src test
       - run: gleam build
-      - run: gleam test --target javascript
+      - run: gleam test
+      - name: Check for warnings
+        run: gleam check 2>&1 | tee check_output.txt && ! grep -q "warning:" check_output.txt
