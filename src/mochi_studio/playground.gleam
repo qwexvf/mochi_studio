@@ -134,7 +134,12 @@ fn view_toolbar(model: Model) -> Element(Msg) {
         attribute.disabled(model.loading),
         event.on_click(ExecuteQuery),
       ],
-      [html.text(case model.loading { True -> "Running…" False -> "Run" })],
+      [
+        html.text(case model.loading {
+          True -> "Running…"
+          False -> "Run"
+        }),
+      ],
     ),
     html.button([event.on_click(CopyShareLink)], [html.text("Share")]),
   ])
@@ -142,8 +147,7 @@ fn view_toolbar(model: Model) -> Element(Msg) {
 
 fn view_response(model: Model) -> Element(Msg) {
   case model.error {
-    Some(err) ->
-      html.pre([attribute.class("response error")], [html.text(err)])
+    Some(err) -> html.pre([attribute.class("response error")], [html.text(err)])
     None ->
       html.pre([attribute.class("response")], [
         html.text(option.unwrap(model.response, "")),

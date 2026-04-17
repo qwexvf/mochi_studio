@@ -52,7 +52,10 @@ pub fn update(model: Model, msg: Msg) -> #(Model, Effect(Msg)) {
     SwitchPanel(panel) -> #(Model(..model, active_panel: panel), effect.none())
     PlaygroundMsg(m) -> {
       let #(pg_model, pg_effect) = pg.update(model.playground, m)
-      #(Model(..model, playground: pg_model), effect.map(pg_effect, PlaygroundMsg))
+      #(
+        Model(..model, playground: pg_model),
+        effect.map(pg_effect, PlaygroundMsg),
+      )
     }
     BuilderMsg(m) -> {
       let #(sb_model, sb_effect) = sb.update(model.builder, m)
