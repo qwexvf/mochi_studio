@@ -10,6 +10,17 @@ import mochi_studio/panel.{type Panel, Builder, Playground}
 import mochi_studio/playground as pg
 import mochi_studio/schema_builder as sb
 
+@external(javascript, "./app_ffi.mjs", "get_hash_panel")
+fn get_hash_panel() -> String {
+  "playground"
+}
+
+@external(javascript, "./app_ffi.mjs", "set_hash_panel")
+fn set_hash_panel(panel: String) -> Nil {
+  let _ = panel
+  Nil
+}
+
 pub type Model {
   Model(
     endpoint: String,
@@ -30,10 +41,14 @@ pub fn init(endpoint: String) -> fn(Nil) -> #(Model, Effect(Msg)) {
   fn(_) {
     let #(pg_model, pg_effect) = pg.init(endpoint)
     let #(sb_model, sb_effect) = sb.init()
+    let initial_panel = case get_hash_panel() {
+      "builder" -> Builder
+      _ -> Playground
+    }
     let model =
       Model(
         endpoint: endpoint,
-        active_panel: Playground,
+        active_panel: initial_panel,
         playground: pg_model,
         builder: sb_model,
         collections: [],
@@ -49,7 +64,10 @@ pub fn init(endpoint: String) -> fn(Nil) -> #(Model, Effect(Msg)) {
 
 pub fn update(model: Model, msg: Msg) -> #(Model, Effect(Msg)) {
   case msg {
-    SwitchPanel(panel) -> #(Model(..model, active_panel: panel), effect.none())
+    SwitchPanel(panel) -> {
+      let hash = case panel { Playground -> "playground" Builder -> "builder" }
+      #(Model(..model, active_panel: panel), effect.from(fn(_) { set_hash_panel(hash) }))
+    }
     PlaygroundMsg(m) -> {
       let #(pg_model, pg_effect) = pg.update(model.playground, m)
       #(Model(..model, playground: pg_model), effect.map(pg_effect, PlaygroundMsg))
