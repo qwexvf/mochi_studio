@@ -78,7 +78,7 @@ pub fn init() -> #(Model, Effect(Msg)) {
   let eff =
     effect.from(fn(dispatch) {
       do_init(diagram_id, fn(json) { dispatch(GotGenerated(json)) })
-      do_init_resize(container_id)
+      let _ = do_init_resize(container_id)
     })
   #(model, eff)
 }
