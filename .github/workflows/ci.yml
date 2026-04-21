@@ -26,4 +26,4 @@ jobs:
       - run: gleam build
       - run: gleam test
       - name: Check for warnings
-        run: gleam check 2>&1 | tee check_output.txt && ! grep -q "warning:" check_output.txt
+        run: gleam check --target javascript 2>&1 | tee check_output.txt && ! grep -q "warning:" check_output.txt
