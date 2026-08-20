@@ -77,7 +77,7 @@ pub fn init() -> #(Model, Effect(Msg)) {
   let model = Model(output: None, output_tab: GleamTab)
   let eff =
     effect.from(fn(dispatch) {
-      do_init(diagram_id, fn(json) { dispatch(GotGenerated(json)) })
+      let _ = do_init(diagram_id, fn(json) { dispatch(GotGenerated(json)) })
       let _ = do_init_resize(container_id)
     })
   #(model, eff)
