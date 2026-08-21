@@ -12,13 +12,13 @@ jobs:
       matrix:
         otp-version: ["27.3", "28.3"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{ matrix.otp-version }}
-          gleam-version: "1.15.4"
+          gleam-version: "1.18.1"
           rebar3-version: "3"
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: "20"
       - run: gleam deps download
