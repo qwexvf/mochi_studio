@@ -116,7 +116,9 @@ pub fn update(model: Model, msg: Msg) -> #(Model, Effect(Msg)) {
 
 // ── JSON decode ───────────────────────────────────────────────────────────────
 
-fn decode_nodes(json_str: String) -> Result(List(SchemaNode), json.DecodeError) {
+fn decode_nodes(
+  json_str: String,
+) -> Result(List(SchemaNode), json.DecodeError) {
   let field_decoder = {
     use name <- decode.field("name", decode.string)
     use field_type <- decode.field("field_type", decode.string)

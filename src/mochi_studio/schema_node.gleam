@@ -155,7 +155,11 @@ fn view_fields(node: SchemaNode) -> Element(NodeMsg) {
   )
 }
 
-fn view_field(node: SchemaNode, field: FieldDef, index: Int) -> Element(NodeMsg) {
+fn view_field(
+  node: SchemaNode,
+  field: FieldDef,
+  index: Int,
+) -> Element(NodeMsg) {
   html.div([attribute.class("flex gap-1 items-center")], [
     html.div(
       [attribute.class("w-1.5 h-1.5 rounded-full bg-gray-600 shrink-0")],
