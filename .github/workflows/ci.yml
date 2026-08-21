@@ -26,4 +26,12 @@ jobs:
       - run: gleam build
       - run: gleam test
       - name: Check for warnings
-        run: gleam check --target javascript 2>&1 | tee check_output.txt && ! grep -q "warning:" check_output.txt
+        # Only fail on warnings in our own source; deps (mist/wisp/otp/...) emit
+        # unused-value warnings when compiled for the JS target and we can't fix those.
+        run: |
+          gleam check --target javascript 2>&1 | tee check_output.txt
+          if grep -E '\.gleam:[0-9]+:[0-9]+' check_output.txt | grep -v '/build/packages/' | grep -q .; then
+            echo "::error::warnings in project source:"
+            grep -E '\.gleam:[0-9]+:[0-9]+' check_output.txt | grep -v '/build/packages/'
+            exit 1
+          fi
