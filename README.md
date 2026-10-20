@@ -1,9 +1,9 @@
-> **Active development** — breaking changes may be pushed to `main` at any time.
+> **Active development.** Breaking changes may be pushed to `main` at any time.
 
 
 # mochi_studio
 
-Interactive GraphQL studio for mochi — playground, query collections, and visual schema explorer.
+GraphQL studio for mochi: a playground, query collections, and a visual schema explorer.
 
 ## Installation
 
